@@ -1,0 +1,23 @@
+{
+  "name": "bowlinggame",
+  "version": "1.0.0",
+  "description": "bowling game assignment challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node ./server/app.js",
+    "server": "nodemon ./server/app.js"
+  },
+  "author": "Scott H",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^6.2.1",
+    "jest": "^27.2.1",
+    "nodemon": "^2.0.13",
+    "supertest": "^6.1.6"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  }
+}
