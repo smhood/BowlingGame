@@ -1,6 +1,15 @@
 
 const request = require("supertest");
-const {Bowling, DEFAULT_SCOREBOARD, DEFAULT_PINS} = require('../server/models/bowling');
+const Scoreboard = require('../server/models/scoreboard');
+const PinSetter = require('../server/models/pinsetter');
+const {     
+    PERFECTGAME,
+    SPAREGAME,
+    SPARESTRIKE,
+    STRIKESPARE,
+    RANDOMONE,
+    RANDOMTWO } = require('./testData');
+
 const express = require('express');
 const app = express();
 
@@ -11,42 +20,118 @@ app.use(express.json({ extended: false }));
 
 app.use('/api', apiRouter);
 
-describe("testing-server-routes", () => {
-    // it("GET /api/bowling/ - success", async () => {
-    //     // Mocks getter of Bowling prototype. Because scoreboard can have getter or setter it must be specified.
-    //     let mockObject = {
-    //         "Scott": JSON.parse(JSON.stringify(DEFAULT_SCOREBOARD))
-    //     }
-    //     const spy = jest.spyOn(Bowling.prototype, 'scoreboard', 'get').mockReturnValueOnce(mockObject);
-    //     const { body } = await request(app).get("/api/bowling/getScore"); //uses the request function that calls on express app instance
+describe("Bowling App", () => {
+    it("calculates a perfect gamme.", async () => {
+        let response1 = await request(app).post("/api/bowling/start").send({players: ['Scott']}); 
 
-    //     expect(body).toEqual(mockObject);
-    // });
+        for(let i = 0; i < PERFECTGAME.length; i++) {
+            let response2 = await request(app).post("/api/bowling/roll").send({pins: PERFECTGAME[i]}); 
+        }
 
-    // it("GET /api/bowling/getScore - success", async () => {
-    //     // Mocks getter of Bowling prototype. Because scoreboard can have getter or setter it must be specified.
-    //     let mockObject = {
-    //         "Scott": JSON.parse(JSON.stringify(DEFAULT_SCOREBOARD))
-    //     }
-    //     const spy = jest.spyOn(Bowling.prototype, 'scoreboard', 'get').mockReturnValueOnce(mockObject);
-    //     const { body } = await request(app).get("/api/bowling/getScore"); //uses the request function that calls on express app instance
+        let response3 = await request(app).get("/api/bowling/scoreboard");
 
-    //     expect(body).toEqual(mockObject);
-    // });
+        let total = 0;
+        for(let i = 1; i <= 10; i++) {
+            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
+        }
 
-    it("POST /api/bowling/start - success", async () => {
-        // Mocks getter of Bowling prototype. Because scoreboard can have getter or setter it must be specified.
-        const spy = jest.spyOn(Bowling.prototype, 'start');
-        const { body } = await request(app).post("/api/bowling/start").send({players: ['Scott']}); //uses the request function that calls on express app instance
-
-        expect(spy).toBeCalled();
+        expect(total).toBe(300);
     });
 
-    it("POST /api/bowling/roll - success", async () => {
-        // Mocks getter of Bowling prototype. Because scoreboard can have getter or setter it must be specified.
-        const spy = jest.spyOn(Bowling.prototype, 'roll');
-        const { body } = await request(app).post("/api/bowling/roll").send({pins: JSON.parse(JSON.stringify(DEFAULT_PINS))}); //uses the request function that calls on express app instance
+    it("calculates at the 10th frame a strike and spare.", async () => {
+        let response1 = await request(app).post("/api/bowling/start").send({players: ['Scott']}); 
 
-        expect(spy).toBeCalled();
+        for(let i = 0; i < STRIKESPARE.length; i++) {
+            let response2 = await request(app).post("/api/bowling/roll").send({pins: STRIKESPARE[i]}); 
+        }
+
+        let response3 = await request(app).get("/api/bowling/scoreboard");
+
+        let total = 0;
+        for(let i = 1; i <= 10; i++) {
+            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
+        }
+
+        expect(total).toBe(285);
+    });
+
+    it("calculates at the 10th frame a spare and strike.", async () => {
+        let response1 = await request(app).post("/api/bowling/start").send({players: ['Scott']}); 
+
+        for(let i = 0; i < SPARESTRIKE.length; i++) {
+            let response2 = await request(app).post("/api/bowling/roll").send({pins: SPARESTRIKE[i]}); 
+        }
+
+        let response3 = await request(app).get("/api/bowling/scoreboard");
+
+        let total = 0;
+        for(let i = 1; i <= 10; i++) {
+            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
+        }
+
+        expect(total).toBe(275);
+    });
+
+    it("calculates nothing but spares.", async () => {
+        let response1 = await request(app).post("/api/bowling/start").send({players: ['Scott']}); 
+
+        for(let i = 0; i < SPAREGAME.length; i++) {
+            let response2 = await request(app).post("/api/bowling/roll").send({pins: SPAREGAME[i]}); 
+        }
+
+        let response3 = await request(app).get("/api/bowling/scoreboard");
+
+        let total = 0;
+        for(let i = 1; i <= 10; i++) {
+            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
+        }
+
+        expect(total).toBe(150);
+    });
+
+    it("calculates combination of everything.", async () => {
+        let response1 = await request(app).post("/api/bowling/start").send({players: ['Scott']}); 
+
+        for(let i = 0; i < RANDOMONE.length; i++) {
+            let response2 = await request(app).post("/api/bowling/roll").send({pins: RANDOMONE[i]}); 
+        }
+
+        let response3 = await request(app).get("/api/bowling/scoreboard");
+
+        let total = 0;
+        for(let i = 1; i <= 10; i++) {
+            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
+        }
+
+        expect(total).toBe(75);
+    });
+
+    it("calculates combination of everything for two players.", async () => {
+        let response1 = await request(app).post("/api/bowling/start").send({players: ['Scott', 'Katrina']}); 
+
+        let alternate = [RANDOMONE, RANDOMTWO];
+        for(let i = 0; i < 20; i = i + 2) {
+            for(let j = 0; j < alternate.length; j++) {
+                let turnOne = alternate[j][i];
+                let turnTwo = alternate[j][i+1];
+                let response2 = await request(app).post("/api/bowling/roll").send({pins: turnOne});
+                let response3 = await request(app).post("/api/bowling/roll").send({pins: turnTwo}); 
+            }
+        }
+
+        let response4 = await request(app).get("/api/bowling/scoreboard");
+
+        let scottTotal = 0;
+        let katTotal = 0;
+        for(let i = 1; i <= 10; i++) {
+            scottTotal += response4.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
+        }
+
+        for(let i = 1; i <= 10; i++) {
+            katTotal += response4.body.players[1].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
+        }
+
+        expect(scottTotal).toBe(75);
+        expect(katTotal).toBe(78);
     });
 });

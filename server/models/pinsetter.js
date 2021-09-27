@@ -19,7 +19,10 @@ class PinSetter {
         let points = 0;
         for(let i = 1; i <= 10; i++) {
             if(knockedPins[i] != this._pins[i]){
-                if(this._pins[i]) points++;
+                if(this._pins[i]) {
+                    this._pins[i] = false;
+                    points++;
+                }
             }
         }
 
@@ -29,8 +32,6 @@ class PinSetter {
     get pins() {
         return this._pins;
     }
-
-    set pins() {
-        this._pins;
-    }
 }
+
+module.exports = PinSetter;
