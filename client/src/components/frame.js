@@ -1,10 +1,8 @@
 import React from 'react';
 
-const test = () => console.log()
-
-const Frame = ({player}) => {
+const Frame = ({player, myTurn}) => {
     return (
-    <div className="Player">
+    <div className={"Player " + (myTurn ? "MyTurn" : "")} >
         <div className="PlayerName">{player.name}</div>
         <div className="Frames">
             {player.frames.map(frame => {

@@ -4,9 +4,10 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 const { apiRouter } = require('./routes');
+// Recomended way for handling cors.
 app.use(cors())
 
-// Middle ware for allowing body json requests.
+// Middleware for allowing body json requests.
 app.use(express.json({ extended: false }));
 
 app.use('/api', apiRouter);

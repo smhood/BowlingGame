@@ -17,9 +17,12 @@ expects to see on the lane monitor during a game.
 * Machine also can tell which pins were knocked over.
 * The machines primary responsibilies is the following: Send which pins were knocked over.
 * Display should get scorecard of the current game. 
+* For writting tests can manually utilize calculate score tool to double check logic. 
 
 # API Endpoints
-## start
+## api/bowling/s
+
+## api/bowling/start
 **Input**
 ```
 { players: list(string) }
@@ -27,30 +30,12 @@ expects to see on the lane monitor during a game.
 **Responsibilities**
 Initial call to start a new bowling match. Also used to reset a current game.
 
+**Reasoning**
+The idea of having to specifically start the game is to make sure that the correct amount of players have been added. Without this call we would assume that there was only one player, and bowling isn't that much fun alone. 
+
 **Response**
 ```
-{
-    "frame": 11,
-    "turn": 0,
-    "players": [
-        {
-            "score": {
-                "1": [],
-                "2": [],
-                "3": [],
-                "4": [],
-                "5": [],
-                "6": [],
-                "7": [],
-                "8": [],
-                "9": [],
-                "10": []
-            },
-            "name": "Scott"
-        }
-    ],
-    "currentPlayer": 0
-}
+Status(200) Let the game begin!
 ```
 
 
@@ -74,6 +59,9 @@ Initial call to start a new bowling match. Also used to reset a current game.
 
 Call to simulate a roll / turn of a player. This will add to the expected players scorecard and move the game forward. This will also determine if there was any strike / spare / or gutter ball.
 
+**Reasoning**
+In the real world, a picture is snapped that tells the pinsetter which pins were knocked down, so logically speaking we shouldn't be taking in a simple score, but what would be the "picture" of pins which were knocked. This also keeps us from having to write in logic such that score is greater than the amount of pins, we simply ignore any pins they say they knocked down because our system knows better than to let them cheat.
+
 **Returns:**
 
 ```
@@ -91,30 +79,93 @@ Call to simulate a roll / turn of a player. This will add to the expected player
 **Responsibilities:**
 Call to get the current score for the bowling game. This makes it so the client doesn't have to do too much work in regards to displaying the information to the user.
 
+**Reasoning**
+While building they UI realized that there was a lot of logic that would have been tied into sending back the flat scoreboard. It was better to pretty it up here and have the logic and knowledge of how bonuses work hidden from the user. 
+
 **Output:**
 
 ```
 {
     "frame": 11,
     "turn": 0,
+    "currentPlayer": 0,
     "players": [
         {
-            "score": {
-                "1": [10,10,10],
-                "2": [10,10,10],
-                "3": [10,10,10],
-                "4": [10,10,10],
-                "5": [10,10,10],
-                "6": [10,10,10],
-                "7": [10,10,10],
-                "8": [10,10,10],
-                "9": [10,10,10],
-                "10": [10,10,10]
-            },
-            "name": "Scott"
+            "name": "Scott",
+            "frames": [
+                {
+                    "frame": "1",
+                    "firstTurn": "5",
+                    "secondTurn": "2",
+                    "thirdTurn": "",
+                    "currentScore": 7
+                },
+                {
+                    "frame": "2",
+                    "firstTurn": "6",
+                    "secondTurn": "3",
+                    "thirdTurn": "",
+                    "currentScore": 16
+                },
+                {
+                    "frame": "3",
+                    "firstTurn": "4",
+                    "secondTurn": "2",
+                    "thirdTurn": "",
+                    "currentScore": 22
+                },
+                {
+                    "frame": "4",
+                    "firstTurn": "7",
+                    "secondTurn": "1",
+                    "thirdTurn": "",
+                    "currentScore": 30
+                },
+                {
+                    "frame": "5",
+                    "firstTurn": "5",
+                    "secondTurn": "2",
+                    "thirdTurn": "",
+                    "currentScore": 37
+                },
+                {
+                    "frame": "6",
+                    "firstTurn": "4",
+                    "secondTurn": "1",
+                    "thirdTurn": "",
+                    "currentScore": 42
+                },
+                {
+                    "frame": "7",
+                    "firstTurn": "5",
+                    "secondTurn": "4",
+                    "thirdTurn": "",
+                    "currentScore": 51
+                },
+                {
+                    "frame": "8",
+                    "firstTurn": "5",
+                    "secondTurn": "1",
+                    "thirdTurn": "",
+                    "currentScore": 57
+                },
+                {
+                    "frame": "9",
+                    "firstTurn": "9",
+                    "secondTurn": "0",
+                    "thirdTurn": "",
+                    "currentScore": 66
+                },
+                {
+                    "frame": "10",
+                    "firstTurn": "8",
+                    "secondTurn": "/",
+                    "thirdTurn": "",
+                    "currentScore": 81
+                }
+            ]
         }
-    ],
-    "currentPlayer": 0
+    ]
 }
 ```
 
@@ -123,9 +174,19 @@ Call to get the current score for the bowling game. This makes it so the client 
 
 Used [Create React App](https://reactjs.org/docs/create-a-new-react-app.html) to generate all the base React requirements and to speed up development process. Because this is an additive piece and because nothing special regarding react is really needed for this, its a perfect tool to utilize to get up and running and building a front end app.
 
-## 
+## Flow
+
+1. User inserts player names.
+2. Click start game.
+3. User Rolls ball
+4. UI is returned with new score and which pins are knocked. 
+5. Turn ends and goes on to next turn.
+6. Repeats until game is over.
+7. User is presented with two options Reset or New Game. Reset will start the game over with the same players while New Game will take you back to the initial screen.
 
 # Potential Addons 
 * Determine if roll was a split.
 * Get individual players score.
-* Calculate total on server.
+* Write tests for front end.
+* Add logic to specify in front end which pins you knocked down.
+* Add winner logic.

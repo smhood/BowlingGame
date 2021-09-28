@@ -7,6 +7,7 @@ let pinsetter = null;
 let scoreboard = null;
 
 bowlingRouter.get('/', (req, res) => {
+    //Checks if a game is in progress.
     return res.json({inProgress: scoreboard != null});
 });
 
@@ -21,10 +22,6 @@ bowlingRouter.get('/pins', (req, res) => {
 
     return res.json(pinsetter.pins);
 });
-
-// bowlingRouter.get('/scores', (req, res) => res.json(bowling.scoreboard));
-
-// bowlingRouter.get('/scores/:player', (req, res) => res.json(bowling.scoreboard));
 
 bowlingRouter.post('/start', (req, res) => {
     if(req.body.players == undefined || req.body.players.length < 1) throw new Error("Bowling is a game better played either by yourself or with friends.")

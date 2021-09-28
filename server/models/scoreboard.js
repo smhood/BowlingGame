@@ -11,13 +11,17 @@ class Scoreboard {
 
     isNextTurn(wasStrike) {
         let resetPins = false;
+        // If a strike we always reset pins.
         if(wasStrike) resetPins = true;
 
+        // If not frame 10
         if(this.frame < 10){
+            // Check if it was the first turn and not a strike, if so just up the turn.
             if(this.turn < 1 && !wasStrike) this.turn++;
             else {
                 resetPins = true
                 this.turn = 0
+                // if incrementing the current player is going out of index range we know that its a new frame. 
                 if(this.players.length - 1 > this.currentPlayer) {
                     this.currentPlayer++;
                 }
@@ -27,8 +31,11 @@ class Scoreboard {
                 }
             };
         }
+        // if frame 10
         else {
+            // Check if it was the first turn and not a strike, if so just up the turn.
             if(this.turn < 1) this.turn++;
+            // Frame 10 can have a bonus turn, so if the current score is greater or equal to 10 then keep going.
             else if(this.turn == 1 && this._getCurrentPlayer().getFrame(this.frame).reduce((partial_sum, a) => partial_sum + a, 0) >= 10) {
                 this.turn++;
                 resetPins = true;
@@ -65,9 +72,7 @@ class Scoreboard {
         else if(score == 10) isStrike = true;
         else if(currentFrame.length == 2 && currentFrame.reduce((partial_sum, a) => partial_sum + a, 0) == 10) isSpare = true;
 
-        // We get the two potential frames which could have bonus scores added to it.
-
-        // Any frames that don't have bonuses added will equal 10. If its a spare there will be two entries in the score, if a strike only one.
+        // If not the first frame, look for bonuses.
         if(this.frame > 1) {
             let lastFrame = this._getCurrentPlayer().getFrame(this.frame - 1);;
 
@@ -110,9 +115,12 @@ class Scoreboard {
 
     get prettyScoreboard() {
         let prettyPlayers = [];
+
+        // Loop through the players and make the scoreboard pretty.
         this.players.forEach(player => {
             let prettyFrames = [];
             let currentScore = 0;
+            // Loop through each frame and set the values to the frame object.
             for(let frame in player.score){
                 let prettyFrame = {
                     frame: String(frame),
@@ -122,32 +130,38 @@ class Scoreboard {
                     currentScore: ""
                 }
 
+                // For every frame first turn set the value to its pretty format, only strikes have special values in first frame.
+                // We set these values here because display wise, you always can show the true value of the first turn.
                 if (player.score[frame].length > 0) {
                     if (player.score[frame][0] == 10) prettyFrame.firstTurn = "X";
                     else prettyFrame.firstTurn = String(player.score[frame][0]);
                 }
+                // After turn 1 now we start getting some logic.
                 if (player.score[frame].length > 1) {
+                    // If its a spare, set the second turn display value to '/'.
                     if (player.score[frame][0] + player.score[frame][1] == 10) {
                         prettyFrame.secondTurn = "/";
+                        // If 3 values in the frame we know bonuses have been applied and we can tally up the current score.
                         if (player.score[frame].length == 3) {
+                            // If its the 10th frame we should check to see if the last turn was a strike, if so display it.
                             if(prettyFrames.length + 1 == 10) {
                                 if(player.score[frame][2] !== 10) prettyFrame.thirdTurn = String(player.score[frame][2])
                                 else prettyFrame.thirdTurn = "X"
                             }
-                            if(this.frame == 10) prettyFrame.thirdTurn = player.score[frame][2];
                             prettyFrame.currentScore = currentScore + player.score[frame].reduce((partial_sum, a) => partial_sum + a, 0);
                             currentScore += player.score[frame].reduce((partial_sum, a) => partial_sum + a, 0);
                         }
                     }
+                    // If its less than 10, we know the first two rolls were nothing special and no more bonuses should be shown.
                     else if (player.score[frame][0] + player.score[frame][1] < 10) {
                         prettyFrame.secondTurn = String(player.score[frame][1]);
                         prettyFrame.currentScore = currentScore + (player.score[frame][0] + player.score[frame][1]);
                         currentScore += player.score[frame][0] + player.score[frame][1];
                     }
+                    // Only other option is above 10 with a strike in the mix. Calculate that as well as all the special elements that could show up in the 10th frame.
                     else {
                         if(prettyFrames.length + 1 == 10) {
                             if(player.score[frame][1] + player.score[frame][2] == 10) prettyFrame.thirdTurn = "/";
-                            if(player.score[frame][0] == 10) prettyFrame.firstTurn = "X"
                             if(player.score[frame][1] == 10) prettyFrame.secondTurn = "X";
                             if(player.score[frame][2] == 10) prettyFrame.thirdTurn = "X"
                             else if(player.score[frame][1] + player.score[frame][2] == 10) {

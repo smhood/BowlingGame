@@ -99,7 +99,9 @@ class Scoreboard extends React.Component {
                 </div> 
                 : 
                 <div>
-                    {this.state.scoreboard.players.map(player => <Frame key={player.name} player={player} currentPlayer={this.state.scoreboard.currentPlayer}/>)}
+                    {this.state.scoreboard.players.map(player => 
+                        <Frame key={player.name} player={player} myTurn={player.name === this.state.scoreboard.players[this.state.scoreboard.currentPlayer].name}/>
+                    )}
                     <div className="ScoreboardSettings">
                         <div className="CurrentFrame">Frame: {this.state.scoreboard.frame} Turn: {this.state.scoreboard.turn}</div>
                         {this.state.scoreboard.frame <= 10 ? <button onClick={this.roll}>Roll</button> : <button onClick={this.startGame}>Reset</button>}

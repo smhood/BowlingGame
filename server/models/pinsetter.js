@@ -15,6 +15,7 @@ class PinSetter {
         this._knockedPins = 0;
     }
 
+    //Compares the current knocked pins to what the user is saying is knocked in order to prevent inflated score.
     calculatePoints(knockedPins) {
         let points = 0;
         for(let i = 1; i <= 10; i++) {
