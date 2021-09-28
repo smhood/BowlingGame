@@ -4,8 +4,6 @@ Using your design, implement (in the programming language of your choosing) the
 scoring / game state display service that would compute needed data that one typically
 expects to see on the lane monitor during a game.
 
-# Diagram
-
 # Notes from Research
 **Links:**
 * [How bowling Alley Works](https://www.youtube.com/watch?v=amx6fp0s28c)
@@ -217,4 +215,6 @@ Used [Create React App](https://reactjs.org/docs/create-a-new-react-app.html) to
 * Write tests for front end.
 * Add logic to specify in front end which pins you knocked down.
 * Add winner logic.
-* Have API on frontend be dynamic. Currently hard coded ports and routes. 
+* Have API on frontend be dynamic. Currently hard coded ports and routes.
+* See if we can refine the tests a little more. 
+* Setup so that we could add more games and abstract score from player, so that the same player model could be used for other games.
