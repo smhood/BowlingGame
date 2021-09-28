@@ -1,0 +1,143 @@
+.App {
+  text-align: center;
+}
+
+.Console {
+  background-color:lightskyblue;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.Console div {
+  font-size: 20px;
+}
+
+.Console button {
+  font-size: 20px;
+  padding: .5em;
+}
+
+.Console input {
+  font-size: 20px;
+}
+
+.ScoreboardSettings {
+  display: flex;
+  flex-direction: stretch;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.CurrentFrame {
+  padding-right: 50px;
+}
+
+.Player {
+  display: flex;
+  flex-direction: column;
+}
+
+.PlayerName {
+  text-align: left;
+  font-size: 40px;
+  padding: 5px;
+}
+
+.Frames {
+  display: flex;
+  flex-direction: stretch;
+  padding: 5px;
+}
+
+.Frame {
+  display: flex;
+  flex-direction: column;
+}
+
+.FrameNumber {
+  text-align: center;
+  border: solid rgb(96, 139, 168);
+  height: 30px;
+  width: 130px;
+  padding: 5px;
+}
+
+.FrameScore {
+  display: flex;
+  flex-direction: column;
+  border: solid rgb(96, 139, 168);
+  width: 130px;
+  padding: 5px;
+}
+
+.FrameTurns {
+  display: flex;
+  flex-direction: stretch;
+  justify-content: flex-end;
+}
+
+.FirstTurn {
+  text-align: left;
+  border: solid transparent;
+  height: 30px;
+  width: 30px;
+  flex-grow: 2;
+  padding: 5px;
+}
+
+.SecondTurn {
+  /* border: 2px solid rgb(96, 139, 168); */
+  text-align: center;
+  border: solid rgb(96, 139, 168);
+  height: 30px;
+  width: 30px;
+  padding: 5px;
+}
+
+.ThirdTurn {
+  /* border: 2px solid rgb(96, 139, 168); */
+  text-align: center;
+  border: solid rgb(96, 139, 168);
+  height: 30px;
+  width: 30px;
+  padding: 5px;
+}
+
+.FrameTotalScore {
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  width: 50px;
+  padding: 5px;
+}
+
+.PlayerInput {
+  display: flex;
+  flex-direction: stretch;
+  padding: 5px;
+}
+
+.Players {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  height: 100px;
+}
+
+.CurrentPlayers {
+  flex-grow: 2;
+}
+
+.Pins {
+  display: flex;
+  flex-direction: stretch;
+}
+
+.Pin {
+  padding: 10px;
+}

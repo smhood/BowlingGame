@@ -6,19 +6,35 @@ const bowlingRouter = Router();
 let pinsetter = null;
 let scoreboard = null;
 
-bowlingRouter.get('/scoreboard', (req, res) => res.json(scoreboard));
+bowlingRouter.get('/', (req, res) => {
+    return res.json({inProgress: scoreboard != null});
+});
+
+bowlingRouter.get('/scoreboard', (req, res) => {
+    if(scoreboard == null) throw new Error("Start the game first to get your scoreboard.");
+
+    return res.json(scoreboard.prettyScoreboard);
+});
+
+bowlingRouter.get('/pins', (req, res) => {
+    if(scoreboard == null) throw new Error("Start the game first to get your pins.");
+
+    return res.json(pinsetter.pins);
+});
 
 // bowlingRouter.get('/scores', (req, res) => res.json(bowling.scoreboard));
 
 // bowlingRouter.get('/scores/:player', (req, res) => res.json(bowling.scoreboard));
 
 bowlingRouter.post('/start', (req, res) => {
+    if(req.body.players == undefined || req.body.players.length < 1) throw new Error("Bowling is a game better played either by yourself or with friends.")
     scoreboard = new Scoreboard(req.body.players);
     pinsetter = new PinSetter();
-    res.json(scoreboard);
+    return res.status(200).send('Let the game begin!');    
 });
 
 bowlingRouter.post('/roll', (req, res) => {
+    if(scoreboard == null) throw new Error("Throwing balls before you're ready is a great way of breaking something....")
     // Check to see if someone is trying to keep playing after all frames are finished. 
     if(scoreboard.frame > 10) throw new Error("This isn't baseball..... No extra frames!")
 
@@ -29,7 +45,7 @@ bowlingRouter.post('/roll', (req, res) => {
     // Handle transition of turns.
     let reset = scoreboard.isNextTurn(results.isStrike);
     if(reset) pinsetter = new PinSetter();
-    
+
     res.json(results)
 });
 

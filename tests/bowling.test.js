@@ -13,29 +13,7 @@ const mockAddScore = jest.fn().mockImplementation(() => {
     };
 });
 const mockIsNextTurn = jest.fn();
-
-
-jest.mock('../server/models/scoreboard', () => {
-    return jest.fn().mockImplementation(() => {
-        return {
-            addScore: mockAddScore,
-            isNextTurn: mockIsNextTurn
-        };
-    });
-});
-jest.mock('../server/models/pinsetter', () => {
-    return jest.fn().mockImplementation(() => {
-        return {
-            calculatePoints: mockCalculatePoints
-        };
-    });
-});
-
-beforeEach(() => {
-    // Clear all instances and calls to constructor and all methods:
-    Scoreboard.mockClear();
-    PinSetter.mockClear();
-});
+const mockGetPrettyScoreboard = jest.fn();
 
 const express = require('express');
 const app = express();
@@ -49,24 +27,47 @@ app.use('/api', apiRouter);
 
 describe("Bowling Router", () => {
     it("returns mocked scoreboard", async () => {
-        // Gets "scoreboard" before its initiated 
-        let response1 = await request(app).get("/api/bowling/scoreboard"); //uses the request function that calls on express app instance
-        expect(response1.body).toEqual(null)
+        const spyOn = jest.spyOn(Scoreboard.prototype, 'prettyScoreboard', 'get').mockImplementation(() => [{name: "Scott"}]);        ;
+
         // Initiates Scoreboard.
         await request(app).post("/api/bowling/start").send({players: ['Scott']});
         // Returns back new object.
-        let response2 = await request(app).get("/api/bowling/scoreboard"); 
-        expect(response2.body).toEqual({})
+        let response = await request(app).get("/api/bowling/scoreboard");
+        expect(spyOn).toHaveBeenCalledTimes(1);
+        expect(response.body).toEqual([{name: "Scott"}]);
     });
 
-    it("hits all the start services.", async () => {
-        const { body } = await request(app).post("/api/bowling/start").send({players: ['Scott']}); 
+    it("returns mocked scoreboard", async () => {
+        let mockPins = {
+            1: true,
+            2: true,
+            3: true,
+            4: true,
+            5: true,
+            6: true,
+            7: true,
+            8: true,
+            9: true,
+            10: true
+        }
+        const spyOn = jest.spyOn(PinSetter.prototype, 'pins', 'get').mockImplementation(() => mockPins);
 
-        expect(PinSetter).toHaveBeenCalledTimes(1);
+        // Initiates Scoreboard.
+        await request(app).post("/api/bowling/start").send({players: ['Scott']});
+        // Returns back new object.
+        let response = await request(app).get("/api/bowling/pins");
+        expect(spyOn).toHaveBeenCalledTimes(1);
+        expect(response.body).toEqual(mockPins);
     });
 
     it("hits all the roll services.", async () => {
-        const { body } = await request(app).post("/api/bowling/roll").send({pins: JSON.parse(JSON.stringify(SPAREONE))}); 
+        await request(app).post("/api/bowling/start").send({players: ['Scott']});
+
+        const mockCalculatePoints = jest.spyOn(PinSetter.prototype, 'calculatePoints');
+        const mockAddScore = jest.spyOn(Scoreboard.prototype, 'addScore');
+        const mockIsNextTurn = jest.spyOn(Scoreboard.prototype, 'isNextTurn');
+
+        const { body } = await request(app).post("/api/bowling/roll").send({pins: {...SPAREONE}}); 
 
         expect(mockCalculatePoints).toHaveBeenCalledTimes(1);
         expect(mockAddScore).toHaveBeenCalledTimes(1);

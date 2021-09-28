@@ -108,6 +108,78 @@ class Scoreboard {
         }
     }
 
+    get prettyScoreboard() {
+        let prettyPlayers = [];
+        this.players.forEach(player => {
+            let prettyFrames = [];
+            let currentScore = 0;
+            for(let frame in player.score){
+                let prettyFrame = {
+                    frame: String(frame),
+                    firstTurn: "",
+                    secondTurn: "",
+                    thirdTurn: "",
+                    currentScore: ""
+                }
+
+                if (player.score[frame].length > 0) {
+                    if (player.score[frame][0] == 10) prettyFrame.firstTurn = "X";
+                    else prettyFrame.firstTurn = String(player.score[frame][0]);
+                }
+                if (player.score[frame].length > 1) {
+                    if (player.score[frame][0] + player.score[frame][1] == 10) {
+                        prettyFrame.secondTurn = "/";
+                        if (player.score[frame].length == 3) {
+                            if(prettyFrames.length + 1 == 10) {
+                                if(player.score[frame][2] !== 10) prettyFrame.thirdTurn = String(player.score[frame][2])
+                                else prettyFrame.thirdTurn = "X"
+                            }
+                            if(this.frame == 10) prettyFrame.thirdTurn = player.score[frame][2];
+                            prettyFrame.currentScore = currentScore + player.score[frame].reduce((partial_sum, a) => partial_sum + a, 0);
+                            currentScore += player.score[frame].reduce((partial_sum, a) => partial_sum + a, 0);
+                        }
+                    }
+                    else if (player.score[frame][0] + player.score[frame][1] < 10) {
+                        prettyFrame.secondTurn = String(player.score[frame][1]);
+                        prettyFrame.currentScore = currentScore + (player.score[frame][0] + player.score[frame][1]);
+                        currentScore += player.score[frame][0] + player.score[frame][1];
+                    }
+                    else {
+                        if(prettyFrames.length + 1 == 10) {
+                            if(player.score[frame][1] + player.score[frame][2] == 10) prettyFrame.thirdTurn = "/";
+                            if(player.score[frame][0] == 10) prettyFrame.firstTurn = "X"
+                            if(player.score[frame][1] == 10) prettyFrame.secondTurn = "X";
+                            if(player.score[frame][2] == 10) prettyFrame.thirdTurn = "X"
+                            else if(player.score[frame][1] + player.score[frame][2] == 10) {
+                                prettyFrame.secondTurn = String(player.score[frame][1])
+                                prettyFrame.thirdTurn = "/";
+                            }
+                            else prettyFrame.thirdTurn = String(player.score[frame][2])
+                        }
+                        prettyFrame.currentScore = currentScore + player.score[frame].reduce((partial_sum, a) => partial_sum + a, 0);
+                        currentScore += player.score[frame].reduce((partial_sum, a) => partial_sum + a, 0);
+                    }
+                }
+                prettyFrames.push(prettyFrame);
+            }
+
+            let playerFrame = {
+                name: player.name,
+                frames: prettyFrames
+            }
+            prettyPlayers.push(playerFrame);
+        });
+
+        let prettyScoreboard = {
+            frame: this.frame,
+            turn: this.turn,
+            currentPlayer: this.currentPlayer,
+            players: prettyPlayers
+        }
+
+        return prettyScoreboard;
+    }
+
     _getCurrentPlayer() {
         return this.players[this.currentPlayer]
     }

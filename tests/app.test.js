@@ -1,8 +1,8 @@
 
 const request = require("supertest");
-const Scoreboard = require('../server/models/scoreboard');
-const PinSetter = require('../server/models/pinsetter');
+
 const {     
+    STRIKE,
     PERFECTGAME,
     SPAREGAME,
     SPARESTRIKE,
@@ -25,17 +25,12 @@ describe("Bowling App", () => {
         let response1 = await request(app).post("/api/bowling/start").send({players: ['Scott']}); 
 
         for(let i = 0; i < PERFECTGAME.length; i++) {
-            let response2 = await request(app).post("/api/bowling/roll").send({pins: PERFECTGAME[i]}); 
+            let response2 = await request(app).post("/api/bowling/roll").send({pins: PERFECTGAME[i]});
         }
 
         let response3 = await request(app).get("/api/bowling/scoreboard");
 
-        let total = 0;
-        for(let i = 1; i <= 10; i++) {
-            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
-        }
-
-        expect(total).toBe(300);
+        expect(response3.body.players[0].frames[9].currentScore).toBe(300);
     });
 
     it("calculates at the 10th frame a strike and spare.", async () => {
@@ -47,12 +42,10 @@ describe("Bowling App", () => {
 
         let response3 = await request(app).get("/api/bowling/scoreboard");
 
-        let total = 0;
-        for(let i = 1; i <= 10; i++) {
-            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
-        }
-
-        expect(total).toBe(285);
+        expect(response3.body.players[0].frames[9].currentScore).toBe(285);
+        expect(response3.body.players[0].frames[9].firstTurn).toBe('X');
+        expect(response3.body.players[0].frames[9].secondTurn).toBe('5');
+        expect(response3.body.players[0].frames[9].thirdTurn).toBe('/');
     });
 
     it("calculates at the 10th frame a spare and strike.", async () => {
@@ -63,13 +56,8 @@ describe("Bowling App", () => {
         }
 
         let response3 = await request(app).get("/api/bowling/scoreboard");
-
-        let total = 0;
-        for(let i = 1; i <= 10; i++) {
-            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
-        }
-
-        expect(total).toBe(275);
+        expect(response3.body.players[0].frames[9].currentScore).toBe(275);
+        expect(response3.body.players[0].frames[9].thirdTurn).toBe('X');
     });
 
     it("calculates nothing but spares.", async () => {
@@ -81,12 +69,8 @@ describe("Bowling App", () => {
 
         let response3 = await request(app).get("/api/bowling/scoreboard");
 
-        let total = 0;
-        for(let i = 1; i <= 10; i++) {
-            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
-        }
-
-        expect(total).toBe(150);
+        expect(response3.body.players[0].frames[9].currentScore).toBe(150);
+        expect(response3.body.players[0].frames[9].thirdTurn).toBe('5');
     });
 
     it("calculates combination of everything.", async () => {
@@ -98,12 +82,7 @@ describe("Bowling App", () => {
 
         let response3 = await request(app).get("/api/bowling/scoreboard");
 
-        let total = 0;
-        for(let i = 1; i <= 10; i++) {
-            total += response3.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
-        }
-
-        expect(total).toBe(75);
+        expect(response3.body.players[0].frames[9].currentScore).toBe(75);
     });
 
     it("calculates combination of everything for two players.", async () => {
@@ -121,17 +100,7 @@ describe("Bowling App", () => {
 
         let response4 = await request(app).get("/api/bowling/scoreboard");
 
-        let scottTotal = 0;
-        let katTotal = 0;
-        for(let i = 1; i <= 10; i++) {
-            scottTotal += response4.body.players[0].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
-        }
-
-        for(let i = 1; i <= 10; i++) {
-            katTotal += response4.body.players[1].score[i].reduce((partial_sum, a) => partial_sum + a, 0);
-        }
-
-        expect(scottTotal).toBe(75);
-        expect(katTotal).toBe(78);
+        expect(response4.body.players[0].frames[9].currentScore).toBe(75);
+        expect(response4.body.players[1].frames[9].currentScore).toBe(78);
     });
 });
