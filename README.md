@@ -19,8 +19,35 @@ expects to see on the lane monitor during a game.
 * Display should get scorecard of the current game. 
 * For writting tests can manually utilize calculate score tool to double check logic. 
 
+# NPM Commands
+## npm run test
+Runs the tests for the project. Currently there are only tests dedicated to the backend due to time constraints and wanting to primarily focus on the logic of the bowling service rather than the UI flow.
+
+## npm run start
+Starts the express service without nodemon. This will cause you to be able to run the service without having save changes restarting the instance.
+
+## npm run server
+Starts the server only with nodemon, allowing for development changes to be added as you save them.
+
+## npm run client
+Starts the front end only allowing you to code and test the frontend without needing the backend.
+
+## npm run dev
+Runs both the frontend and the backend in order to fully test the two toghether. 
+
 # API Endpoints
-## api/bowling/s
+## api/bowling/
+
+**Responsibilities**
+Initial call to start a new bowling match. Also used to reset a current game.
+
+**Reasoning**
+Wanted some form of call other than the scoreboard api and checking on the client if the scoreboard was initiated, seperated this out and made a quick easy call to see if anyone was bowling.
+
+**Response**
+```
+{ inProgress: bool }
+```
 
 ## api/bowling/start
 **Input**
@@ -37,7 +64,6 @@ The idea of having to specifically start the game is to make sure that the corre
 ```
 Status(200) Let the game begin!
 ```
-
 
 ## roll
 **Input**
@@ -177,12 +203,13 @@ Used [Create React App](https://reactjs.org/docs/create-a-new-react-app.html) to
 ## Flow
 
 1. User inserts player names.
-2. Click start game.
-3. User Rolls ball
-4. UI is returned with new score and which pins are knocked. 
-5. Turn ends and goes on to next turn.
-6. Repeats until game is over.
-7. User is presented with two options Reset or New Game. Reset will start the game over with the same players while New Game will take you back to the initial screen.
+![Start Game](/assets/startScreen.png)
+3. Click start game.
+![Scoreboard](/assets/scoreboard.png)
+4. User Rolls ball, after a roll the pins which were knocked down are displayed. After your turn is over moves to the next player.
+![Scoreboard](/assets/changeTurn.png)
+5. Repeats until game is over. User is presented with two options Reset or New Game. Reset will start the game over with the same players while New Game will take you back to the initial screen.
+![Scoreboard](/assets/endGame.png)
 
 # Potential Addons 
 * Determine if roll was a split.
@@ -190,3 +217,4 @@ Used [Create React App](https://reactjs.org/docs/create-a-new-react-app.html) to
 * Write tests for front end.
 * Add logic to specify in front end which pins you knocked down.
 * Add winner logic.
+* Have API on frontend be dynamic. Currently hard coded ports and routes. 
