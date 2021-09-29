@@ -28,6 +28,13 @@ expects to see on the lane monitor during a game.
 * Display should get scorecard of the current game. 
 * For writting tests can manually utilize calculate score tool to double check logic. 
 
+## Initialization
+
+Run npm init in the following two directories:
+1. Root directory (initiates the node_modules needed by the server).
+2. Client directory (inmitiates the node_modules needed by the client).
+3. Run the rest of the commands available in this documentation in the root directory.
+
 # NPM Commands
 ## npm run test
 Runs the tests for the project. Currently there are only tests dedicated to the backend due to time constraints and wanting to primarily focus on the logic of the bowling service rather than the UI flow.
