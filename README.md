@@ -28,7 +28,7 @@ expects to see on the lane monitor during a game.
 * Display should get scorecard of the current game. 
 * For writting tests can manually utilize calculate score tool to double check logic. 
 
-## Initialization
+# Initialization
 
 Run npm init in the following two directories:
 1. Root directory (initiates the node_modules needed by the server).
